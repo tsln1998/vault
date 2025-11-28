@@ -5,23 +5,31 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - uses: actions/checkout@v6
         with:
-          version: 0.3.40
+          fetch-depth: 1
+      - uses: superfly/flyctl-actions/setup-flyctl@1.5
+        with:
+          version: 0.3.226
       - name: prepare secrets
+        run: |
+          grep -v ^\# < .secrets >> $GITHUB_ENV
+      - name: override secrets
         env:
           SECRETS: "${{ toJSON(secrets) }}"
         run: |
-          grep -v ^\# < .secrets >> $GITHUB_ENV
           echo "$SECRETS" | jq -r 'keys[] as $k | "\($k)=\(.[$k])"' >> $GITHUB_ENV
       - name: create app
-        run: flyctl apps create --name $FLY_APP 2>/dev/null || true
+        run: |
+          flyctl apps create --name $FLY_APP 2>/dev/null || true
       - name: create volume
-        run: flyctl volume create vaultwarden -y -n 1 -r $FLY_REGION 2>/dev/null || true
+        run: |
+          flyctl volume create vaultwarden -y -n 1 -r $FLY_REGION 2>/dev/null || true
       - name: exports secrets
-        run: env | grep ^APP_ | sed 's/^APP_//g' | flyctl secrets import --stage
+        run: |
+          env | grep ^APP_ | sed 's/^APP_//g' | flyctl secrets import --stage
       - name: deploy app
-        run: flyctl deploy --yes --remote-only --regions $FLY_REGION
+        run: |
+          flyctl deploy --yes --remote-only
