@@ -1,5 +1,5 @@
 # LiteStream versioned image
-FROM litestream/litestream:0.3 AS litestream
+FROM litestream/litestream:0.5.2 AS litestream
 
 # Vaultwarden
 FROM vaultwarden/server:latest

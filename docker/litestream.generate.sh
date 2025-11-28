@@ -19,8 +19,8 @@ access-key-id:      ${S3_ACCESS_KEY_ID}
 secret-access-key:  ${S3_SECRET_ACCESS_KEY}
 dbs:
 - path:             /data/db.sqlite3
-  replicas:
-  - type:           s3
+  replica:
+    type:           s3
     bucket:         ${S3_BUCKET}
     path:           ${S3_PATH}
     endpoint:       ${S3_ENDPOINT}
