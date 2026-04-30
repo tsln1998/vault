@@ -17,6 +17,11 @@ exec: /start.sh
 addr: ":9090"
 access-key-id:      ${S3_ACCESS_KEY_ID}
 secret-access-key:  ${S3_SECRET_ACCESS_KEY}
+snapshot:
+  interval: 6h
+  retention: 720h
+validation:
+  interval: 12h
 dbs:
 - path:             /data/db.sqlite3
   replica:
@@ -24,5 +29,5 @@ dbs:
     bucket:         ${S3_BUCKET}
     path:           ${S3_PATH}
     endpoint:       ${S3_ENDPOINT}
-    retention:      720h
+    sync-interval:  1m
 EOF
